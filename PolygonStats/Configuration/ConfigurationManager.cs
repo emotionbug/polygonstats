@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace PolygonStats.Configuration
 {
@@ -10,6 +11,9 @@ namespace PolygonStats.Configuration
         private string JsonSource { get; set; } = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Config.json";
         private static readonly Lazy<ConfigurationManager> _shared = new(() => new ConfigurationManager());
         public static ConfigurationManager Shared => _shared.Value;
+
+        /* Global Json Deserializer Options */
+        public static JsonSerializerOptions JsonDeserializerOptions;
 
         public Config Config { get; set; }
 
@@ -29,6 +33,9 @@ namespace PolygonStats.Configuration
             }
             Config.Encounter.DiscordWebhooks.RemoveAt(0);
 
+            JsonDeserializerOptions = new JsonSerializerOptions();
+            JsonDeserializerOptions.Converters.Add(new NumberToStringConverter());
+
             Console.WriteLine("Config was loaded!");
         }
 
@@ -44,6 +51,19 @@ namespace PolygonStats.Configuration
             File.WriteAllText(JsonSource, json);
 
             Console.WriteLine("Config was created!");
+        }
+
+        private class NumberToStringConverter : JsonConverter<string>
+        {
+            public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return reader.TokenType == JsonTokenType.Number ? reader.GetInt64().ToString() : reader.GetString();
+            }
+
+            public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value);
+            }
         }
     }
 }

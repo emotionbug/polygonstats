@@ -117,7 +117,7 @@ namespace PolygonStats
                 }
                 try
                 {
-                    MessageObject message = JsonSerializer.Deserialize<MessageObject>(trimedJsonString);
+                    MessageObject message = JsonSerializer.Deserialize<MessageObject>(trimedJsonString, PolyConfig.JsonDeserializerOptions);
 
                     if (PolyConfig.Shared.Config.Debug.DebugMessages)
                     {
