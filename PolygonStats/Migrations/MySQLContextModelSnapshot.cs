@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PolygonStats;
 
+#nullable disable
+
 namespace PolygonStats.Migrations
 {
     [DbContext(typeof(MySQLContext))]
@@ -14,8 +16,8 @@ namespace PolygonStats.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 64)
-                .HasAnnotation("ProductVersion", "5.0.6");
+                .HasAnnotation("ProductVersion", "7.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("PolygonStats.Models.Account", b =>
                 {
@@ -35,7 +37,10 @@ namespace PolygonStats.Migrations
                     b.Property<string>("HashedName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<DateTime>("LastCooldown")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("LastUpdate")
                         .HasColumnType("datetime(6)");
@@ -49,7 +54,7 @@ namespace PolygonStats.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50) CHARACTER SET utf8mb4");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<long>("NextLevelExp")
                         .HasColumnType("bigint");
@@ -205,6 +210,8 @@ namespace PolygonStats.Migrations
 
                     b.HasIndex("SessionId");
 
+                    b.HasIndex("timestamp");
+
                     b.ToTable("SessionLogEntry");
                 });
 
@@ -262,6 +269,10 @@ namespace PolygonStats.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
+
+                    b.HasIndex("EndTime");
+
+                    b.HasIndex("StartTime");
 
                     b.ToTable("Session");
                 });

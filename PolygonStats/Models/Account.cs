@@ -75,6 +75,9 @@ namespace PolygonStats.Models
         public int Shadow { get; set; }
         public DateTime LastUpdate { get; set; }
 
+        [DefaultValue(0)]
+        public DateTime LastCooldown { get; set; }
+
         public IList<Session> Sessions { get; set; } = new List<Session>();
     }
 }
